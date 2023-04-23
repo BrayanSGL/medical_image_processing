@@ -1,0 +1,23 @@
+# Archivos y carpetas específicos de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyi
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Archivos de imagen
+*.bmp
+*.gif
+*.png
+*.jpg
+*.jpeg
+
+# Otros archivos y carpetas
+.DS_Store
+.idea/
+.vscode/
+*.log
