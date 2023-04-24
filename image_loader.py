@@ -1,20 +1,16 @@
 import os
-from tkinter import *
-from PIL import ImageTk, Image
 
 class ImageLoader:
-    def __init__(self, images_path, gui):
-        self.images_path = images_path
-        self.gui = gui
-        self.image_list  = []
-        self.load_images()
+    def __init__(self, folder_path):
+        self.folder_path = folder_path
+        self.image_paths = []
+        self.update_image_paths()
 
-    def load_images(self):
-        for filename in os.listdir(self.images_path):
-            if filename.endswith('.jpg') or filename.endswith('.png'):
-                self.image_list.append(os.path.join(self.images_path, filename))
-        self.gui.update_image_list(self.image_list)
+    def update_image_paths(self):
+        self.image_paths = [os.path.join(self.folder_path, filename) for filename in os.listdir(self.folder_path) if filename.endswith('.jpg')]
 
-    def load_selected_image(self, index):
-        img = Image.open(self.image_list[index])
-        self.gui.show_image(img)
+    def get_images(self):
+        return [os.path.basename(path) for path in self.image_paths]
+
+    def get_image_path(self, index):
+        return self.image_paths[index]

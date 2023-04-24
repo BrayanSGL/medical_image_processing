@@ -16,8 +16,8 @@ class GUI:
         # Crear la barra lateral
         self.image_listbox = Listbox(self.root)
         self.image_listbox.pack(side=LEFT, fill=Y)
-        #self.update_image_listbox()
-        #self.image_listbox.bind('<<ListboxSelect>>', self.image_selected)
+        self.update_image_listbox()
+        self.image_listbox.bind('<<ListboxSelect>>', self.image_selected)
         
         # Crear la zona de visualización de imágenes
         self.canvas = Canvas(self.root, width=600, height=600)
