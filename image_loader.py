@@ -1,4 +1,5 @@
 import os
+from PIL import Image, ImageTk
 
 class ImageLoader:
     def __init__(self, folder_path):
@@ -14,3 +15,11 @@ class ImageLoader:
 
     def get_image_path(self, index):
         return self.image_paths[index]
+    
+    def resize_to_square(self,image):
+        width, height = image.size
+        size = max(width, height)
+        new_image = Image.new('RGB', (size, size), (0, 0, 0))
+        new_image.paste(image, ((size - width) // 2, (size - height) // 2))
+        return new_image
+
