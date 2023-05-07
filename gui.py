@@ -11,11 +11,14 @@ class GUI:
 
         # Crear la ventana principal
         self.root = Tk()
+        self.root.geometry("1150x650") # Tamaño de la ventana principal (ancho x alto)
+        self.root.resizable(False, False)
         self.root.title("Procesamiento de Imágenes Médicas")
+        self.root.iconbitmap('favicon.ico')
 
         # Crear la barra lateral frame
         self.sidebar = Frame(self.root, width=200,
-                             bg='white', height=600, padx=10, pady=10)
+                             bg='#EAF2F8', height=600, padx=10, pady=10)
         self.sidebar.pack(side=LEFT, fill=BOTH)
 
         # Label de la previsualización de la imagen
@@ -32,17 +35,42 @@ class GUI:
 
         # Botón para procesar imágen
         self.load_button = Button(
-            self.sidebar, text="Procesar imágen", command=self.process_image)
+            self.sidebar, text="Procesar imágen", command=self.process_image, bg='#A9CCE3', fg='black', width=20, height=2, border=1, padx=2, pady=2)
         self.load_button.pack(side=BOTTOM, fill=X)
         self.load_button.config(state=DISABLED)
 
         # Crear la zona de visualización de imágenes
-        self.images_frame = Frame(self.root, width=600, height=600)
+        self.images_frame = Frame(self.root, width=600, height=600, bg='#EAF2F8')
         self.images_frame.pack(side=RIGHT, fill=BOTH, expand=True)
-        self.original_image_label = Label(
-            self.images_frame, width=82, height=600, bg='green').pack(side=LEFT)
-        self.processed_image_label = Label(
-            self.images_frame,  width=82, height=600, bg='black').pack(side=RIGHT)
+
+
+        # Labels de las imagenes
+        self.original_image_label = Label(self.images_frame, width=300, height=600, bg='#D4E6F1')
+        self.process_image_label = Label(self.images_frame, width=300, height=600, bg='#A9CCE3')
+        self.heatmap_label = Label(self.images_frame, width=300, height=600, bg='#7FB3D5')
+
+        self.original_image_label.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        self.process_image_label.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
+        self.heatmap_label.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
+
+
+        original_image = Image.open("images/brain6.jpg")
+        original_image = self.image_loader.resize_to_square(original_image)
+        original_image = original_image.resize((200, 200))
+        original_image = ImageTk.PhotoImage(original_image)
+        self.original_image_label.config(image=original_image)
+
+        process_image = Image.open("images/brain6.jpg")
+        process_image = self.image_loader.resize_to_square(process_image)
+        process_image = process_image.resize((200, 200))
+        process_image = ImageTk.PhotoImage(process_image)  
+        self.process_image_label.config(image=process_image)
+
+        heatmap = Image.open("images/dilatacion.jpg")
+        heatmap = self.image_loader.resize_to_square(heatmap)
+        heatmap = heatmap.resize((200, 200))
+        heatmap = ImageTk.PhotoImage(heatmap)
+        self.heatmap_label.config(image=heatmap)
 
         # Mostrar la ventana principal
         self.root.mainloop()

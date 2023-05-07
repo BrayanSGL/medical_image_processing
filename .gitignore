@@ -12,8 +12,8 @@ build/
 # Archivos de imagen
 *.bmp
 *.gif
-*.png
-*.jpg
+#*.png
+#*.jpg
 *.jpeg
 
 # Otros archivos y carpetas
