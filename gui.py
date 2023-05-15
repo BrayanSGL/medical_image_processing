@@ -3,9 +3,10 @@ from PIL import ImageTk, Image
 
 
 class GUI:
-    def __init__(self, image_processor, image_loader):
+    def __init__(self, image_processor, image_loader, heat_map):
         self.image_processor = image_processor
         self.image_loader = image_loader
+        self.heat_map = heat_map
         self.current_image = None
         self.current_heatmap = None
 
@@ -33,15 +34,19 @@ class GUI:
         self.update_image_listbox()
         self.image_listbox.bind('<<ListboxSelect>>', self.image_selected)
 
+        self.result_label = Label(self.sidebar, text="RESULTADO -> ", bg='#EAF2F8', fg='black', width=20, height=2, border=1, padx=2, pady=2)
+        self.result_label.pack(side=BOTTOM, fill=X)
+
         # Botón para procesar imágen
         self.load_button = Button(
             self.sidebar, text="Procesar imágen", command=self.process_image, bg='#A9CCE3', fg='black', width=20, height=2, border=1, padx=2, pady=2)
         self.load_button.pack(side=BOTTOM, fill=X)
         self.load_button.config(state=DISABLED)
 
+
         # Crear la zona de visualización de imágenes
         self.images_frame = Frame(self.root, width=600, height=600, bg='#EAF2F8')
-        self.images_frame.pack(side=RIGHT, fill=BOTH, expand=True)
+        self.images_frame.pack(side=RIGHT, fill=BOTH, expand=True)      
 
 
         # Labels de las imagenes
