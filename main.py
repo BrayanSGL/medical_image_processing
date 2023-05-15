@@ -7,7 +7,7 @@ from heat_map import HeatMap
 class Main:
     def __init__(self):
         self.image_processor = ImageProcessor()
-        self.heat_map = None
+        self.heat_map = HeatMap()
         self.image_loader = ImageLoader('images')
         
 

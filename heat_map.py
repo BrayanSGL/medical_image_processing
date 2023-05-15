@@ -1,3 +1,3 @@
 class HeatMap:
-    def __init__(self, image_loader):
+    def __init__(self):
         pass

@@ -23,3 +23,9 @@ class ImageLoader:
         new_image.paste(image, ((size - width) // 2, (size - height) // 2))
         return new_image
 
+    def image_2_tkinter(self,image_path):
+        image = Image.open(image_path)
+        image = self.resize_to_square(image)
+        image = image.resize((200, 200))
+        image = ImageTk.PhotoImage(image)
+        return image
