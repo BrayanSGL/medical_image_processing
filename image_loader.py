@@ -8,7 +8,7 @@ class ImageLoader:
         self.update_image_paths()
 
     def update_image_paths(self):
-        self.image_paths = [os.path.join(self.folder_path, filename) for filename in os.listdir(self.folder_path) if filename.endswith('.jpg')]
+        self.image_paths = [os.path.join(self.folder_path, filename) for filename in os.listdir(self.folder_path) if (filename.endswith('.jpg') or filename.endswith('.png'))]
 
     def get_images(self):
         return [os.path.basename(path) for path in self.image_paths]
