@@ -23,9 +23,9 @@ class GUI:
                              bg='#EAF2F8', height=600, padx=10, pady=10)
         self.sidebar.pack(side=LEFT, fill=BOTH)
 
-
-        self.preview_canvas = Canvas(self.sidebar, bg='black', width=200, height=200)
-        self.preview_canvas.pack(side=TOP, fill=BOTH, expand=True)        
+        self.preview_canvas = Canvas(
+            self.sidebar, bg='black', width=200, height=200)
+        self.preview_canvas.pack(side=TOP, fill=BOTH, expand=True)
 
         # Lista de imágenes
         self.image_listbox = Listbox(self.sidebar, width=30, height=20)
@@ -62,10 +62,12 @@ class GUI:
             row=0, column=1, sticky="nsew", padx=5, pady=5)
         self.heatmap_label.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
 
-        original_image = self.image_loader.image_2_tkinter('assets/prev_one.png')
+        original_image = self.image_loader.image_2_tkinter(
+            'assets/prev_one.png')
         self.original_image_label.config(image=original_image)
 
-        process_image = self.image_loader.image_2_tkinter('assets/prev_two.png')
+        process_image = self.image_loader.image_2_tkinter(
+            'assets/prev_two.png')
         self.process_image_label.config(image=process_image)
 
         heatmap = self.image_loader.image_2_tkinter('assets\prev_three.png')
@@ -90,23 +92,19 @@ class GUI:
         # Cargar la imagen seleccionada en la zona de visualización de la barra lateral
         self.current_image = self.image_loader.image_2_tkinter(image_path)
         self.preview_canvas.delete("all")
-        self.preview_canvas.create_image(0, 0, anchor=NW, image=self.current_image)
+        self.preview_canvas.create_image(
+            0, 0, anchor=NW, image=self.current_image)
 
         # Habilitar el botón de procesar imagen
         self.load_button.config(state=NORMAL)
 
     def process_image(self):
-        # test
-        # Obtener el índice del elemento seleccionado en la lista
-
-        print("process_image")
-
         # Procesar la imagen seleccionada
+        index = self.image_listbox.curselection()[0]
+        image_path = self.image_loader.get_image_path(index)
+        self.image_processor.process_image(image_path)
 
-        # # Procesar la imagen seleccionada
-        # processed_image, heatmap = self.image_processor.process_image(self.current_image)
-
-        # # Mostrar la imagen procesada en la zona de visualización
+        # Mostrar la imagen procesada en la zona de visualización
         # self.current_image = ImageTk.PhotoImage(processed_image)
         # self.canvas.delete("all")
         # self.canvas.create_image(0, 0, anchor=NW, image=self.current_image)
