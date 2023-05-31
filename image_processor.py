@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-
+from PIL import ImageTk, Image
 
 class ImageProcessor():
     def __init__(self) -> None:
@@ -32,9 +32,6 @@ class ImageProcessor():
 
         # operacion and
         self.image = cv.bitwise_and(self.image, frame)
-        return self.image
-
-    def get_diagnostic(self):
         # detectar la canridad de objetos en la imagen
         _, labels = cv.connectedComponents(self.image)
 
@@ -42,6 +39,10 @@ class ImageProcessor():
         for i in range(1, labels.max() + 1):
             if cv.contourArea(cv.findNonZero(cv.inRange(labels, i, i))) < 200:
                 self.image[labels == i] = 0
+        
+        return self.image
+
+    def get_diagnosis(self):
 
         # Detectar que isla es mas alta la de la izquierda o la de la derecha
         left = self.image[50:370, 30:200]
@@ -56,9 +57,19 @@ class ImageProcessor():
 
         if higth_left > higth_right:
             percentage = ((higth_left/higth_right) - 1) * 100
+            affected_lung = 'left'
         elif higth_right > higth_left:
             percentage = ((higth_right/higth_left) - 1) * 100
+            affected_lung = 'right'
         else:
             percentage = 0
+            affected_lung = 'none'
 
-        return True if percentage > 50 else False, percentage
+        return True if percentage > 50 else False, round(percentage, 1), affected_lung
+
+    def cv_2_tkinter(self, image):
+        # resize image
+        image = cv.resize(image, (200, 200))
+        img_pil = Image.fromarray(image)
+        img_tk = ImageTk.PhotoImage(image=img_pil)
+        return img_tk

@@ -8,7 +8,10 @@ class GUI:
         self.image_loader = image_loader
         self.heat_map = heat_map
         self.current_image = None
+        self.current_original = None
         self.current_heatmap = None
+        self.current_processed = None
+        self.current_diagnosis = None
 
         # Crear la ventana principal
         self.root = Tk()
@@ -102,7 +105,40 @@ class GUI:
         # Procesar la imagen seleccionada
         index = self.image_listbox.curselection()[0]
         image_path = self.image_loader.get_image_path(index)
-        self.image_processor.process_image(image_path)
+
+        self.current_original = self.image_loader.image_2_tkinter(image_path)
+        self.original_image_label.config(image=self.current_original)
+
+        self.current_processed = self.image_processor.cv_2_tkinter(self.image_processor.process_image(image_path))
+        self.process_image_label.config(image=self.current_processed)
+
+        self.current_diagnosis = self.image_processor.get_diagnosis()
+     
+        #convertir de boolean a string
+        if self.current_diagnosis[0]:
+            diagnosis = "Afirmativo "+"| "+str(self.current_diagnosis[2])+" | "+str(self.current_diagnosis[1])+"%"
+        else:
+            diagnosis = "Negativo"
+
+        self.result_label.config(text="-> " + diagnosis)
+    
+
+        
+
+        # procesada = self.image_processor.process_image(image_path)
+
+        # #modificar el label de original
+        # self.original_image_label.config(image=self.current_image)
+
+        # #modificar el label de procesada
+        # # Crear una imagen de PIL a partir de la matriz de la imagen de OpenCV
+        # img_pil = Image.fromarray(procesada)
+
+        # # Crear una imagen de Tkinter a partir de la imagen de PIL
+        # img_tk = ImageTk.PhotoImage(img_pil)
+
+        # self.process_image_label.config(image=img_tk)
+
 
         # Mostrar la imagen procesada en la zona de visualización
         # self.current_image = ImageTk.PhotoImage(processed_image)
