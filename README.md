@@ -1,5 +1,5 @@
 # Procesamiento de Imágenes Médicas
-Este repositorio contiene un programa de procesamiento de imágenes médicas que permite detectar y analizar posibles anomalías en los pulmones.
+Este repositorio contiene un programa de procesamiento de imágenes médicas que permite detectar y analizar un posible derrame pleural en los pulmones.
 
 ## Requisitos
 - Python 3.7 o superior
@@ -7,9 +7,9 @@ Este repositorio contiene un programa de procesamiento de imágenes médicas que
 
 ## Instalación
 1. Clona este repositorio en tu máquina local:
-`git clone https://github.com/tu_usuario/procesamiento-imagenes-medicas.git`
+`git clone https://github.com/BrayanSGL/medical_image_processing.git`
 2. Ve al directorio del proyecto:
-`cd procesamiento-imagenes-medicas`
+`cd medical_image_processing`
 3. Instala las dependencias:
 `pip install -r requirements.txt`
 
@@ -57,4 +57,4 @@ Este proyecto se encuentra bajo la Licencia MIT. Para más información, por fav
 
 ## Banco de imagenes utilizado
 
-Se uso Open-i® for Imaging Abstracts, [Open-i®](https://openi.nlm.nih.gov/), para obtener las imagenes de pulmones con derrame pleural.
+Se uso [Open-i® - Open Access Biomedical Image Search Engine](https://openi.nlm.nih.gov/), para obtener las imagenes de pulmones con derrame pleural.
