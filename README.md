@@ -1,19 +1,60 @@
-- ImageProcessor: esta clase será responsable de procesar las imágenes médicas utilizando la librería OpenCV. Tendrá métodos para cargar una imagen, aplicar filtros, detectar patologías y generar un mapa de calor.
+# Procesamiento de Imágenes Médicas
+Este repositorio contiene un programa de procesamiento de imágenes médicas que permite detectar y analizar posibles anomalías en los pulmones.
 
-- ImageLoader: esta clase manejará la carga de imágenes desde la carpeta 'images' y la actualización de la barra lateral en la interfaz gráfica.
+## Requisitos
+- Python 3.7 o superior
+- Bibliotecas: OpenCV, NumPy, PIL, tkinter
 
-- HeatMap: esta clase se encargará de generar y mostrar el mapa de calor de una imagen procesada.
+## Instalación
+1. Clona este repositorio en tu máquina local:
+`git clone https://github.com/tu_usuario/procesamiento-imagenes-medicas.git`
+2. Ve al directorio del proyecto:
+`cd procesamiento-imagenes-medicas`
+3. Instala las dependencias:
+`pip install -r requirements.txt`
 
-- GUI: esta clase será responsable de la creación de la interfaz gráfica utilizando la librería Tkinter. Tendrá métodos para manejar la selección de imágenes, llamar al procesamiento de imágenes y actualizar la visualización de la imagen y el mapa de calor.
+## Uso
+1. Asegúrate de tener las imágenes médicas que deseas procesar en la carpeta "images" dentro del directorio del proyecto.
 
-- Main: esta clase iniciará la aplicación y creará una instancia de la clase GUI.
+2. Ejecuta el siguiente comando para iniciar la aplicación:
+`python main.py`
 
-Cada una de estas clases tendrá atributos y métodos específicos para llevar a cabo su tarea y colaborar con las demás clases en el proyecto. Al utilizar la programación orientada a objetos, se pueden diseñar clases con alta cohesión y bajo acoplamiento, lo que resultará en un código más legible, mantenible y escalable.
+3. La aplicación mostrará una ventana con una lista de imágenes en la barra lateral izquierda.
 
-## Imágenes de derrame pleural
+4. Selecciona una imagen de la lista haciendo clic en ella.
 
-- [Imagen 1](https://openi.nlm.nih.gov/detailedresult?img=PMC3891066_kjim-21-57-g001&query=pleural%20effusion&it=xg&req=4&npos=37)
-- [Imagen 2](https://openi.nlm.nih.gov/detailedresult?img=PMC5351360_LI-34-167-g002&query=pleural%20effusion&it=xg&req=4&npos=40)
-- [Imagen 3](https://openi.nlm.nih.gov/detailedresult?img=PMC3276037_LI-29-59-g001&query=pleural%20effusion&it=xg&req=4&npos=20)
-- [Imagen 4](https://openi.nlm.nih.gov/detailedresult?img=PMC3420480_CRIM.ENDOCRINOLOGY2012-941241.001&query=pleural%20effusion&it=xg&req=4&npos=22)
-- [Imagen 5](https://openi.nlm.nih.gov/detailedresult?img=PMC2596110_1757-1626-1-323-2&query=pleural%20effusion&it=xg&req=4&npos=24)
+5. Haz clic en el botón "Procesar imagen" para procesar la imagen seleccionada.
+
+6. La aplicación mostrará la imagen original, la imagen procesada y un mapa de calor en la zona de visualización.
+
+7. La etiqueta "RESULTADO ->" mostrará el resultado del análisis de la imagen.
+
+## Funcionalidades
+
+- Procesamiento de imagen: La aplicación realiza varias operaciones de procesamiento en la imagen seleccionada, como redimensionamiento, desenfoque, mejora del contraste, umbralización y eliminación de objetos no deseados.
+
+- Análisis de imagen: La aplicación determina la altura relativa de las islas pulmonares izquierda y derecha y calcula el porcentaje de diferencia entre ellas. Si la diferencia supera el 50%, se considera que el pulmón afectado es el que tiene una altura mayor. Si la diferencia es inferior al 50%, no se detecta ninguna anomalía.
+
+- Mapa de calor: Si se detecta una anomalía en la imagen, la aplicación genera un mapa de calor resaltando el área afectada en el pulmón correspondiente.
+
+## Contribuciones
+Las contribuciones son bienvenidas. Si quieres mejorar este proyecto, por favor sigue los siguientes pasos:
+
+1. Crea un fork del repositorio.
+2. Crea una rama con el nombre de la nueva funcionalidad o mejora que deseas implementar.
+3. Realiza los cambios necesarios en el código.
+4. Haz commit de tus cambios.
+5. Realiza un push a tu repositorio.
+6. Crea una pull request en este repositorio.
+
+## Autores
+- [Brayan Snader Galeano Lara](https://github.com/brayansgl)
+- [Johan Felipe Perez Pulido](https://github.com/JohanPulido)
+
+## Licencia
+
+Este proyecto se encuentra bajo la Licencia MIT. Para más información, por favor consulta el archivo [LICENSE](LICENSE).
+
+## Banco de imagenes utilizado
+
+Se uso Open-i® for Imaging Abstracts, [Open-i®](https://openi.nlm.nih.gov/), para obtener las imagenes de pulmones con derrame pleural.
