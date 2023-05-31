@@ -10,8 +10,7 @@ class HeatMap:
         self.image_aux = cv.resize(self.image_aux, (400, 400))
         self.image = image_processed
         self.diagnosis = diagnosis
-
-        print(left.max(), right.max(), self.diagnosis)
+   
 
         if self.diagnosis == 'right':
             espejo = np.zeros((400, 400), np.uint8)
