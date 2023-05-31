@@ -109,7 +109,9 @@ class GUI:
         self.current_original = self.image_loader.image_2_tkinter(image_path)
         self.original_image_label.config(image=self.current_original)
 
-        self.current_processed = self.image_processor.cv_2_tkinter(self.image_processor.process_image(image_path))
+        image_processed = self.image_processor.process_image(image_path)
+
+        self.current_processed = self.image_processor.cv_2_tkinter(image_processed)
         self.process_image_label.config(image=self.current_processed)
 
         self.current_diagnosis = self.image_processor.get_diagnosis()
@@ -122,32 +124,10 @@ class GUI:
 
         self.result_label.config(text="-> " + diagnosis)
     
-
-        
-
-        # procesada = self.image_processor.process_image(image_path)
-
-        # #modificar el label de original
-        # self.original_image_label.config(image=self.current_image)
-
-        # #modificar el label de procesada
-        # # Crear una imagen de PIL a partir de la matriz de la imagen de OpenCV
-        # img_pil = Image.fromarray(procesada)
-
-        # # Crear una imagen de Tkinter a partir de la imagen de PIL
-        # img_tk = ImageTk.PhotoImage(img_pil)
-
-        # self.process_image_label.config(image=img_tk)
-
-
-        # Mostrar la imagen procesada en la zona de visualización
-        # self.current_image = ImageTk.PhotoImage(processed_image)
-        # self.canvas.delete("all")
-        # self.canvas.create_image(0, 0, anchor=NW, image=self.current_image)
-
-        # # Mostrar el mapa de calor
-        # self.current_heatmap = ImageTk.PhotoImage(heatmap)
-        # self.canvas.create_image(0, 0, anchor=NW, image=self.current_heatmap)
-
-        # # Deshabilitar el botón de procesar imagen
-        # self.process_button.config(state=DISABLED)
+        if self.current_diagnosis[0]:
+            self.current_heatmap = self.heat_map.get_heatmap(image_processed, self.current_diagnosis[2], self.current_diagnosis[3], self.current_diagnosis[4], image_path)
+            self.current_heatmap = self.image_processor.cv_2_tkinter(self.current_heatmap)
+            self.heatmap_label.config(image=self.current_heatmap)
+        else:
+            self.current_heatmap = self.image_loader.image_2_tkinter('assets\prev_three.png')
+            self.heatmap_label.config(image=self.current_heatmap)

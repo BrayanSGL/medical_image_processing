@@ -65,7 +65,7 @@ class ImageProcessor():
             percentage = 0
             affected_lung = 'none'
 
-        return True if percentage > 50 else False, round(percentage, 1), affected_lung
+        return True if percentage > 50 else False, round(percentage, 1), affected_lung, left, right
 
     def cv_2_tkinter(self, image):
         # resize image

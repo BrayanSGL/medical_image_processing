@@ -1,22 +1,24 @@
 import cv2 as cv
 import numpy as np
 
-paths = ['images\chan1.png',
-         'images\PMC2954381_ATM-5-247-g001.png',
-         'images\Ovarian_Hyperstimulation.png',
+paths = ['images\Carbimazole_induced.png',
          'images\Carcinoid_Rare_Koch.png',
-         'images\Carbimazole_induced.png']
+         'images\Ovarian_Hyperstimulation.png',
+         'images\Malignant_Lymphoma.png',
+         'images\pleural_effusion.png']
 
-paths1 = ['images\sana1.png',
-          'images\sana2.jpg',
-          'images\sana3.jpg',
-          'images\sana4.jpg',
-          'images\sana5.jpg']
+paths1 = ['images\Clear_Lung_Xray.jpg',
+          'images\Frontal_Lung_Xray.png',
+          'images\Healthy_Chest_Radiograph.jpg',
+          'images/Unremarkable_Chest_Xray.jpg',
+          'images/Normal_Pulmonary_RayX.jpg']
 
 # Leer la imagen de la radiografía en escala de grises
 image = cv.imread(paths[4], cv.IMREAD_GRAYSCALE)
 #redimensionar la imagen a 200 x 200
 image = cv.resize(image, (400, 400))
+image_aux = cv.imread(paths[4], cv.IMREAD_COLOR)
+image_aux = cv.resize(image_aux, (400, 400))
 
 # Preprocesamiento de la imagen
 #suavizar la imagen
@@ -75,8 +77,10 @@ altura_derecha = right.max() - right.min()
 #porcentaje de tamaño de la isla mas grande con respecto a la isla mas pequeña
 if altura_izquierda > altura_derecha:
     porcentaje = ((altura_izquierda / altura_derecha)-1) * 100
+    mas_grande = 'izquierda'
 else:
     porcentaje = ((altura_derecha / altura_izquierda)-1) * 100
+    mas_grande = 'derecha'
 
 #si el porcentaje de la isla mas grande con respecto a la isla mas pequeña es mayor a 50% entonces la imagen esta enferma
 if porcentaje > 50:
@@ -85,11 +89,70 @@ else:
     print('Sano', porcentaje)
 
 
-#mostrar la imagen procesada
+if mas_grande == 'derecha':
+    espejo = np.zeros((400, 400), np.uint8)
+    espejo[50:370, 30:200] = image[50:370, 200:370][:, ::-1]
+    #obtenemos el pixel blanco con y mas alto de la imagen original
+    pixel_mas_alto = left.max()
+    #que lo que este menor a ese pixel sea zeros
+    espejo[0:pixel_mas_alto+50, 0:200] = 0
+elif mas_grande == 'izquierda':
+    espejo = np.zeros((400, 400), np.uint8)
+    espejo[50:370, 200:370] = image[50:370, 30:200][:, ::-1]
+    #obtenemos el pixel blanco con y mas alto de la imagen original
+    pixel_mas_alto = right.max()
+    #que lo que este menor a ese pixel sea zeros
+    espejo[0:pixel_mas_alto+50, 200:370] = 0
+
+#mapa de color a espejo
+espejo = cv.applyColorMap(espejo, cv.COLORMAP_WINTER)
+#desenfoque a espejo
+espejo = cv.GaussianBlur(espejo, (5, 5), 5)
+#aplicar contorno a lo rojo
+
+print(image_aux.shape, espejo.shape)
+
+image_aux = cv.addWeighted(image_aux, 1, espejo, 0.5, 0)
 
 
-cv.imshow('Resultado', image)
-cv.imshow('Resultado1', equalized_image)
+cv.imshow('Resultado', image_aux)
+cv.imshow('Resultado1', image)
+
+
+
+#Mapa de calor
+# if mas_grande == 'izquierda':
+#     #copiar y pegar la parte izquierda de la imagen en la parte derecha de la imagen en espejo
+#     #guardar la imagen espejo
+#     espejo = image.copy()
+#     espejo[50:370, 200:370] = image[50:370, 30:200][:, ::-1]
+#     #aplixcar xor a la imagen espejo entre espejo y la imagen original
+#     espejo = cv.bitwise_xor(espejo, image)
+#     pixel_mas_bajo_derecha = right.max()
+#     print('Pixel mas bajo derecha: ', pixel_mas_bajo_derecha)
+    
+#     #hacer que desde ese pixel mas bajo hacia arriba todo sea negro
+#     espejo[0:pixel_mas_bajo_derecha,0:200] = 0
+# elif mas_grande == 'derecha':
+#     #copiar y pegar la parte izquierda de la imagen en la parte derecha de la imagen en espejo
+#     #guardar la imagen espejo
+#     espejo = image.copy()
+#     espejo[50:370, 30:200] = image[50:370, 200:370][:, ::-1]
+#     #aplixcar xor a la imagen espejo entre espejo y la imagen original
+#     espejo = cv.bitwise_xor(espejo, image)
+#     pixel_mas_bajo_derecha = left.max()
+#     print('Pixel mas bajo derecha: ', pixel_mas_bajo_derecha)
+    
+#     #hacer que desde ese pixel mas bajo hacia arriba todo sea negro
+#     espejo[0:pixel_mas_bajo_derecha,200:370] = 0
+
+
+#hacer ese if mas elegante
+
+
+
+
+
 
 cv.waitKey(0)
 cv.destroyAllWindows()
