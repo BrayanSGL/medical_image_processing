@@ -1,5 +1,5 @@
-from tkinter import *
-from PIL import ImageTk, Image
+import tkinter as tk
+import threading
 
 
 class GUI:
@@ -13,121 +13,168 @@ class GUI:
         self.current_processed = None
         self.current_diagnosis = None
 
-        # Crear la ventana principal
-        self.root = Tk()
-        # Tamaño de la ventana principal (ancho x alto)
+        # Main window initialization
+        self.root = tk.Tk()
+        # size (width x height)
         self.root.geometry("1150x650")
         self.root.resizable(False, False)
-        self.root.title("Procesamiento de Imágenes Médicas")
+        self.root.title("Digital Image Processing")
         self.root.iconbitmap('assets/favicon.ico')
 
-        # Crear la barra lateral frame
-        self.sidebar = Frame(self.root, width=200,
-                             bg='#EAF2F8', height=600, padx=10, pady=10)
-        self.sidebar.pack(side=LEFT, fill=BOTH)
+        # sidebar frame creation
+        self.sidebar = tk.Frame(self.root, width=200, bg='#A9CCE3', height=600, padx=10, pady=10)
+        self.sidebar.pack(side=tk.LEFT, fill=tk.BOTH)
 
-        self.preview_canvas = Canvas(
-            self.sidebar, bg='black', width=200, height=200)
-        self.preview_canvas.pack(side=TOP, fill=BOTH, expand=True)
+        self.preview_canvas = tk.Canvas(self.sidebar, bg='white', width=200, height=200)
+        print(f"Initial Canvas size: {self.preview_canvas.winfo_width()} {self.preview_canvas.winfo_height()}")
+        self.preview_canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        # Lista de imágenes
-        self.image_listbox = Listbox(self.sidebar, width=30, height=20)
-        self.image_listbox.pack(side=TOP, fill=BOTH, expand=True)
+        # List of images
+        self.image_listbox = tk.Listbox(self.sidebar, width=40, height=20, bg='yellow')
+        self.image_listbox.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.update_image_listbox()
         self.image_listbox.bind('<<ListboxSelect>>', self.image_selected)
 
-        self.result_label = Label(self.sidebar, text="RESULTADO -> ", bg='#EAF2F8',
-                                  fg='black', width=20, height=2, border=1, padx=2, pady=2)
-        self.result_label.pack(side=BOTTOM, fill=X)
+        # Button to process image
+        self.load_button = tk.Button(self.sidebar, text="Load image", command=self.process_image_threaded,
+                                     bg='#A9CCE3', fg='black', width=20, height=4, border=1, padx=2, pady=2)
+        self.load_button.pack(side=tk.BOTTOM, fill=tk.X)
+        self.load_button.config(state=tk.DISABLED)
 
-        # Botón para procesar imágen
-        self.load_button = Button(
-            self.sidebar, text="Procesar imágen", command=self.process_image, bg='#A9CCE3', fg='black', width=20, height=2, border=1, padx=2, pady=2)
-        self.load_button.pack(side=BOTTOM, fill=X)
-        self.load_button.config(state=DISABLED)
+        # Result label
+        self.result_label = tk.Label(self.sidebar, text="RESULTADO -> ", bg='#A9CCE3', fg='black', width=20, height=2,
+                                     border=1, padx=2, pady=2)
+        self.result_label.pack(side=tk.BOTTOM, fill=tk.X)
+        self.result_label.config(state=tk.DISABLED)
 
-        # Crear la zona de visualización de imágenes
-        self.images_frame = Frame(
-            self.root, width=600, height=600, bg='#EAF2F8')
-        self.images_frame.pack(side=RIGHT, fill=BOTH, expand=True)
+        # Create the image display frame
+        self.images_frame = tk.Frame(self.root, width=300, height=300, bg='#A9CCE3')
+        self.images_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-        # Labels de las imagenes
-        self.original_image_label = Label(
-            self.images_frame, width=300, height=600, bg='#D4E6F1')
-        self.process_image_label = Label(
-            self.images_frame, width=300, height=600, bg='#A9CCE3')
-        self.heatmap_label = Label(
-            self.images_frame, width=300, height=600, bg='#7FB3D5')
+        # Labels for images
+        aspect_ratio = 4 / 3
+        label_height = 200
+        label_width = int(label_height * aspect_ratio)
 
-        self.original_image_label.grid(
-            row=0, column=0, sticky="nsew", padx=5, pady=5)
-        self.process_image_label.grid(
-            row=0, column=1, sticky="nsew", padx=5, pady=5)
+        self.original_image_label = tk.Label(self.images_frame, width=label_width, height=label_height, bg='#D4E6F1')
+        self.process_image_label = tk.Label(self.images_frame, width=label_width, height=label_height, bg='#A9CCE3')
+        self.heatmap_label = tk.Label(self.images_frame, width=label_width, height=label_height, bg='#7FB3D5')
+
+        self.original_image_label.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        self.process_image_label.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
         self.heatmap_label.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
 
-        original_image = self.image_loader.image_2_tkinter(
-            'assets/prev_one.png')
-        self.original_image_label.config(image=original_image)
-
-        process_image = self.image_loader.image_2_tkinter(
-            'assets/prev_two.png')
-        self.process_image_label.config(image=process_image)
-
-        heatmap = self.image_loader.image_2_tkinter('assets\prev_three.png')
-        self.heatmap_label.config(image=heatmap)
-
-        # Mostrar la ventana principal
+        # Show the main window
         self.root.mainloop()
 
     def update_image_listbox(self):
         images = self.image_loader.get_images()
-        self.image_listbox.delete(0, END)
+        self.image_listbox.delete(0, tk.END)
         for image in images:
-            self.image_listbox.insert(END, image)
+            self.image_listbox.insert(tk.END, image)
 
     def image_selected(self, event):
-        # Obtener el índice del elemento seleccionado en la lista
-        index = self.image_listbox.curselection()[0]
+        print("Image selected!")
 
-        # Obtener la ruta de la imagen seleccionada
-        image_path = self.image_loader.get_image_path(index)
+        try:
+            # Get the index of the selected item in the list
+            index = self.image_listbox.curselection()[0]
+            # Get the path of the selected image
+            image_path = self.image_loader.get_image_path(index)
+            # Print the image path for debugging
+            print("Loading image:", image_path)
+            # Load the selected image into the sidebar preview canvas
+            self.current_image = self.image_loader.image_2_tkinter(image_path)
+            # Clear previous drawings on the canvas
+            self.preview_canvas.delete("all")
+            # Create the new image on the canvas
+            self.preview_canvas.create_image(0, 0, anchor=tk.NW, image=self.current_image)
+            self.preview_canvas.config(width=self.current_image.width(), height=self.current_image.height())
+            # Enable the process image button
+            self.load_button.config(state=tk.NORMAL)
+            print(f"Canvas size: {self.preview_canvas.winfo_width()} {self.preview_canvas.winfo_height()}")
 
-        # Cargar la imagen seleccionada en la zona de visualización de la barra lateral
-        self.current_image = self.image_loader.image_2_tkinter(image_path)
-        self.preview_canvas.delete("all")
-        self.preview_canvas.create_image(
-            0, 0, anchor=NW, image=self.current_image)
+            # Display the original image immediately
+            self.current_original = self.image_loader.image_2_tkinter(image_path)
+            self.original_image_label.config(image=self.current_original)
 
-        # Habilitar el botón de procesar imagen
-        self.load_button.config(state=NORMAL)
+        except IndexError:
+            print("No image selected.")
+
+    def process_image_threaded(self):
+        # Create a thread for processing the image
+        threading.Thread(target=self.process_image).start()
 
     def process_image(self):
-        # Procesar la imagen seleccionada
-        index = self.image_listbox.curselection()[0]
-        image_path = self.image_loader.get_image_path(index)
+        try:
+            # Process the selected image
+            index = self.image_listbox.curselection()[0]
+            image_path = self.image_loader.get_image_path(index)
 
-        self.current_original = self.image_loader.image_2_tkinter(image_path)
-        self.original_image_label.config(image=self.current_original)
+            print("Processing image:", image_path)
 
-        image_processed = self.image_processor.process_image(image_path)
+            # Print label size and position before configuration
+            print("Label size before:", self.original_image_label.winfo_width(),
+                  self.original_image_label.winfo_height())
+            print("Label position before:", self.original_image_label.winfo_x(), self.original_image_label.winfo_y())
 
-        self.current_processed = self.image_processor.cv_2_tkinter(image_processed)
-        self.process_image_label.config(image=self.current_processed)
+            # Load the original image
+            self.current_original = self.image_loader.image_2_tkinter(image_path)
+            print("Original image loaded")
 
-        self.current_diagnosis = self.image_processor.get_diagnosis()
-     
-        #convertir de boolean a string
-        if self.current_diagnosis[0]:
-            diagnosis = "Afirmativo "+"| "+str(self.current_diagnosis[2])+" | "+str(self.current_diagnosis[1])+"%"
-        else:
-            diagnosis = "Negativo"
+            # Print label size and position
+            print("Label size:", self.original_image_label.winfo_width(), self.original_image_label.winfo_height())
+            print("Label position:", self.original_image_label.winfo_x(), self.original_image_label.winfo_y())
 
-        self.result_label.config(text="-> " + diagnosis)
-    
-        if self.current_diagnosis[0]:
-            self.current_heatmap = self.heat_map.get_heatmap(image_processed, self.current_diagnosis[2], self.current_diagnosis[3], self.current_diagnosis[4], image_path)
-            self.current_heatmap = self.image_processor.cv_2_tkinter(self.current_heatmap)
-            self.heatmap_label.config(image=self.current_heatmap)
-        else:
-            self.current_heatmap = self.image_loader.image_2_tkinter('assets\prev_three.png')
-            self.heatmap_label.config(image=self.current_heatmap)
+            # Configure the original image label
+            self.original_image_label.config(image=self.current_original)
+            print("Original image label configured")
+
+            # Process the image
+            image_processed = self.image_processor.process_image(image_path)
+
+            # Convert the processed image to Tkinter format
+            self.current_processed = self.image_processor.cv_2_tkinter(image_processed)
+
+            # Configure the processed image label
+            self.process_image_label.config(image=self.current_processed)
+            print("Processed image label configured")
+
+            # Get the diagnosis
+            self.current_diagnosis = self.image_processor.get_diagnosis()
+
+            # Convert from boolean to string
+            if self.current_diagnosis[0]:
+                diagnosis = "Afirmativo | " + str(self.current_diagnosis[2]) + " | " + str(
+                    self.current_diagnosis[1]) + "%"
+            else:
+                diagnosis = "Negativo"
+
+            # Configure the result label
+            self.result_label.config(text="-> " + diagnosis)
+            print("Result label configured")
+
+            # Configure the heatmap label if the diagnosis is affirmative
+            if self.current_diagnosis[0]:
+                self.current_heatmap = self.heat_map.get_heatmap(image_processed,
+                                                                 self.current_diagnosis[2],
+                                                                 self.current_diagnosis[3],
+                                                                 self.current_diagnosis[4],
+                                                                 image_path)
+                self.current_heatmap = self.image_processor.cv_2_tkinter(self.current_heatmap)
+                self.heatmap_label.config(image=self.current_heatmap)
+                print("Heatmap label configured")
+
+        except IndexError:
+            print("No image selected.")
+
+        finally:
+
+            # Schedule GUI update after processing
+            self.root.after(1, self.update_gui_after_processing)
+
+    def update_gui_after_processing(self):
+        # Enable the process image button after processing
+        self.load_button.config(state=tk.NORMAL)
+        # GUI update
+        self.root.update()
